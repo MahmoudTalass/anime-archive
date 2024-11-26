@@ -23,6 +23,7 @@ const userAnimeEntrySchema: Schema = new Schema<IUserAnimeEntry>(
       startedDate: { type: Schema.Types.Date },
       notes: { type: Schema.Types.String },
       user_id: { type: Schema.Types.ObjectId, ref: "User" },
+      rating: { type: Schema.Types.Number },
    },
    { timestamps: true }
 );

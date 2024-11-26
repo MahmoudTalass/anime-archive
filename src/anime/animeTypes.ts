@@ -17,8 +17,9 @@ export interface IUserAnimeEntry {
    status: AnimeWatchStatus;
    startedDate?: Date;
    finishedDate?: Date;
-   notes: String;
+   notes?: String;
    user_id: Types.ObjectId;
    createdAt: Date;
    updatedAt: Date;
+   rating?: Number;
 }
