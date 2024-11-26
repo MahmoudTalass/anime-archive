@@ -11,13 +11,21 @@ const animeSchema: Schema = new Schema<IAnime>({
    genres: [Schema.Types.String],
 });
 
-const userAnimeEntrySchema: Schema = new Schema<IUserAnimeEntry>({
-   anime_id: { type: Schema.Types.ObjectId, ref: "anime" },
-   status: { type: String, enum: ["completed", "watching", "planning to watch"], required: true },
-   finishedDate: { type: Schema.Types.Date },
-   startedDate: { type: Schema.Types.Date },
-   notes: { type: Schema.Types.String },
-});
+const userAnimeEntrySchema: Schema = new Schema<IUserAnimeEntry>(
+   {
+      anime_id: { type: Schema.Types.ObjectId, ref: "Anime", index: true },
+      status: {
+         type: String,
+         enum: ["completed", "watching", "planning to watch"],
+         required: true,
+      },
+      finishedDate: { type: Schema.Types.Date },
+      startedDate: { type: Schema.Types.Date },
+      notes: { type: Schema.Types.String },
+      user_id: { type: Schema.Types.ObjectId, ref: "User" },
+   },
+   { timestamps: true }
+);
 
 export const UserAnimeEntry = mongoose.model<IUserAnimeEntry>(
    "UserAnimeEntry",
