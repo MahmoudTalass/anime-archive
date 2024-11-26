@@ -19,4 +19,6 @@ export interface IUserAnimeEntry {
    finishedDate?: Date;
    notes: String;
    user_id: Types.ObjectId;
+   createdAt: Date;
+   updatedAt: Date;
 }
