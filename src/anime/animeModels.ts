@@ -2,9 +2,9 @@ import mongoose, { Schema } from "mongoose";
 import { IAnime, IUserAnimeEntry } from "./animeTypes";
 
 const animeSchema: Schema = new Schema<IAnime>({
-   mal_id: { type: Schema.Types.Number, required: true, unique: true },
+   malId: { type: Schema.Types.Number, required: true, unique: true },
    title: { type: Schema.Types.String, required: true, index: true },
-   image_url: { type: Schema.Types.String },
+   imageUrl: { type: Schema.Types.String },
    episodes: { type: Schema.Types.Number },
    synopsis: { type: Schema.Types.String },
    url: { type: Schema.Types.String, required: true },
@@ -13,7 +13,7 @@ const animeSchema: Schema = new Schema<IAnime>({
 
 const userAnimeEntrySchema: Schema = new Schema<IUserAnimeEntry>(
    {
-      anime_id: { type: Schema.Types.ObjectId, ref: "Anime", index: true },
+      animeId: { type: Schema.Types.ObjectId, ref: "Anime", index: true },
       status: {
          type: String,
          enum: ["completed", "watching", "planning to watch"],
@@ -22,7 +22,7 @@ const userAnimeEntrySchema: Schema = new Schema<IUserAnimeEntry>(
       finishedDate: { type: Schema.Types.Date },
       startedDate: { type: Schema.Types.Date },
       notes: { type: Schema.Types.String },
-      user_id: { type: Schema.Types.ObjectId, ref: "User" },
+      userId: { type: Schema.Types.ObjectId, ref: "User" },
       rating: { type: Schema.Types.Number },
    },
    { timestamps: true }
