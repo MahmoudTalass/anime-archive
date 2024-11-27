@@ -9,8 +9,12 @@ export class AppError extends Error {
     }
 }
 
-export function logError(statusCode: number, errorMessage: string) {
-    console.error(`status: ${statusCode}, message: ${errorMessage}`);
+export function logError(statusCode: number, errorMessage: string, functionName?: string) {
+    let message: string = `status: ${statusCode}, message: ${errorMessage}`;
+    if (functionName) {
+        message += `, occured in ${functionName}`;
+    }
+    console.error();
 }
 
 export function errorHandlingMiddleware(
