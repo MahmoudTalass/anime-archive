@@ -25,7 +25,28 @@ export interface IUserAnimeEntry {
     score?: number;
 }
 
+// represents two top-level properties in the json response from the jikan api when
+// animes are requested
 export interface AnimeApiResponse {
     data: Record<string, any>;
     pagination?: Record<string, any>;
+}
+
+// represents an anime entry thats in the json response from the jikan api
+export interface AnimeEntryApiResponse {
+    mal_id: number;
+    url: string;
+    images: {
+        jpg: {
+            image_url: string;
+            small_image_url: string;
+            large_image_url: string;
+        };
+        webp: {
+            image_url: string;
+            small_image_url: string;
+            large_image_url: string;
+        };
+    };
+    title: string;
 }
