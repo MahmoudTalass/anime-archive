@@ -3,8 +3,13 @@ import { NextFunction, Request, Response } from "express";
 import { IAnime } from "./animeTypes";
 
 const getAnimes = asyncHanlder(async (req: Request, res: Response, next: NextFunction) => {
+    // used || since NaN would pass ?? operator
     const pageNumber = Number(req.query.page) || 1;
-    const response = await fetch(`${process.env.ANIME_API_BASE_URL}/anime?page=${pageNumber}`);
+    const searchTerm = req.query.page ?? req.query.q;
+
+    const response = await fetch(
+        `${process.env.ANIME_API_BASE_URL}/anime?page=${pageNumber}&q=${searchTerm}`
+    );
     const { data, pagination } = await response.json();
 
     const animeData: IAnime[] = data.map((anime: Record<string, any>) => {
