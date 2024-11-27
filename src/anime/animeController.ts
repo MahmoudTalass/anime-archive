@@ -26,7 +26,7 @@ const getAnimes = asyncHandler(async (req: Request, res: Response, next: NextFun
     );
 
     if (!response.ok) {
-        logError(response.status, response.statusText);
+        logError(response.status, response.statusText, "getAnimes");
         throw new AppError("Could not retreive anime data, please try again later.", 502);
     }
 
@@ -44,7 +44,7 @@ const getAnime = asyncHandler(async (req: Request, res: Response) => {
     const response = await fetch(`${process.env.ANIME_API_BASE_URL}/anime/${malId}`);
 
     if (!response.ok) {
-        logError(response.status, response.statusText);
+        logError(response.status, response.statusText, "getAnime");
         if (response.status === 404) {
             throw new AppError("Anime not found.", 404);
         }
@@ -65,7 +65,7 @@ const getRecommendationsBasedOnAnime = asyncHandler(
         );
 
         if (!response.ok) {
-            logError(response.status, response.statusText);
+            logError(response.status, response.statusText, "getRecommendationsBasedOnAnimes");
             throw new AppError("Could not find recommendations for this anime", response.status);
         }
 
@@ -92,7 +92,7 @@ const getRecentlyUserRecommendedAnimes = asyncHandler(
         );
 
         if (!response.ok) {
-            logError(response.status, response.statusText);
+            logError(response.status, response.statusText, "getRecentlyUserRecommendedAnimes");
             throw new AppError("Could not retreive recommendations, try again later.", 500);
         }
 
