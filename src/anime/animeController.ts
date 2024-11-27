@@ -1,9 +1,14 @@
 import { default as asyncHandler } from "express-async-handler";
 import { NextFunction, Request, Response } from "express";
-import { AnimeApiResponse, AnimeEntryApiResponse, IAnime } from "./animeTypes";
+import {
+    AnimeApiResponse,
+    AnimeEntryApiResponse,
+    IAnime,
+    SingleAnimeApiResponse,
+} from "./animeTypes";
 import { AppError, logError } from "../helpers/errorHelpers";
 
-function transformAnimeData(anime: Record<string, any>): IAnime {
+function transformAnimeData(anime: SingleAnimeApiResponse): IAnime {
     return {
         malId: anime.mal_id,
         title: anime.title_english ?? anime.title,
@@ -32,7 +37,7 @@ const getAnimes = asyncHandler(async (req: Request, res: Response, next: NextFun
 
     const { data, pagination } = (await response.json()) as AnimeApiResponse;
 
-    const animeData: IAnime[] = data.map((anime: Record<string, any>) => {
+    const animeData: IAnime[] = data.map((anime: SingleAnimeApiResponse) => {
         return transformAnimeData(anime);
     });
 
@@ -51,7 +56,21 @@ const getAnime = asyncHandler(async (req: Request, res: Response) => {
         throw new AppError("Could not retreive anime data.");
     }
 
-    const { data } = (await response.json()) as AnimeApiResponse;
+    const { data } = await response.json();
+    const anime: IAnime = transformAnimeData(data);
+
+    res.json({ data: anime });
+});
+
+const getRandomAnime = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const response = await fetch(`${process.env.ANIME_API_BASE_URL}/random/anime`);
+
+    if (!response.ok) {
+        logError(response.status, response.statusText, "getRandomAnime");
+        throw new AppError("Could not retreive a random anime.");
+    }
+
+    const { data } = await response.json();
     const anime: IAnime = transformAnimeData(data);
 
     res.json({ data: anime });
@@ -122,4 +141,10 @@ const getRecentlyUserRecommendedAnimes = asyncHandler(
     }
 );
 
-export { getAnimes, getAnime, getRecommendationsBasedOnAnime, getRecentlyUserRecommendedAnimes };
+export {
+    getAnimes,
+    getAnime,
+    getRecommendationsBasedOnAnime,
+    getRecentlyUserRecommendedAnimes,
+    getRandomAnime,
+};
