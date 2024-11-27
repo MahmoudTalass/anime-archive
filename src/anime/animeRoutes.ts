@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
     getAnime,
     getAnimes,
+    getRandomAnime,
     getRecentlyUserRecommendedAnimes,
     getRecommendationsBasedOnAnime,
 } from "./animeController";
@@ -20,6 +21,11 @@ const router: Router = Router();
 router.get("/", getAnimes);
 
 /**
+ * get random anime
+ */
+router.get("/random", getRandomAnime);
+
+/**
  * get recently recommended animes by users
  */
 router.get("/recommendations", getRecentlyUserRecommendedAnimes);
@@ -35,10 +41,5 @@ router.get("/:malId/recommendations", getRecommendationsBasedOnAnime);
  *  GET: /api/animes/:id
  */
 router.get("/:malId", getAnime);
-
-/**
- * get random anime
- */
-// router.get("/random");
 
 export default router;
