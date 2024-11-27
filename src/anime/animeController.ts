@@ -1,6 +1,6 @@
 import { default as asyncHandler } from "express-async-handler";
 import { NextFunction, Request, Response } from "express";
-import { AnimeApiResponse, IAnime } from "./animeTypes";
+import { AnimeApiResponse, AnimeEntryApiResponse, IAnime } from "./animeTypes";
 import { AppError, logError } from "../helpers/errorHelpers";
 
 function transformAnimeData(anime: Record<string, any>): IAnime {
@@ -54,7 +54,7 @@ const getAnime = asyncHandler(async (req: Request, res: Response) => {
     const { data } = (await response.json()) as AnimeApiResponse;
     const anime: IAnime = transformAnimeData(data);
 
-    res.json({ anime });
+    res.json({ data: anime });
 });
 
 const getRecommendationsBasedOnAnime = asyncHandler(
@@ -70,8 +70,8 @@ const getRecommendationsBasedOnAnime = asyncHandler(
         }
 
         const { data } = await response.json();
-        const animes: Partial<IAnime> = data.map((anime: { entry: Record<string, any> }) => {
-            const entry = anime.entry;
+        const animes = data.map((anime: { entry: AnimeEntryApiResponse } & Record<string, any>) => {
+            const entry: AnimeEntryApiResponse = anime.entry;
             return {
                 malId: entry.mal_id,
                 title: entry.title,
@@ -84,4 +84,42 @@ const getRecommendationsBasedOnAnime = asyncHandler(
     }
 );
 
-export { getAnimes, getAnime, getRecommendationsBasedOnAnime };
+const getRecentlyUserRecommendedAnimes = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const pageNumber: number = Number(req.query.page) || 1;
+        const response = await fetch(
+            `${process.env.ANIME_API_BASE_URL}/recommendations/anime?page=${pageNumber}`
+        );
+
+        if (!response.ok) {
+            logError(response.status, response.statusText);
+            throw new AppError("Could not retreive recommendations, try again later.", 500);
+        }
+
+        const { data } = await response.json();
+
+        const animes: Partial<IAnime>[] = data.reduce(
+            (
+                acc: Partial<IAnime>[],
+                data: { entry: AnimeEntryApiResponse[] } & Record<string, any>
+            ) => {
+                const entries: Partial<IAnime>[] = data.entry.map(
+                    (anime: AnimeEntryApiResponse) => {
+                        return {
+                            malId: anime.mal_id,
+                            title: anime.title,
+                            url: anime.url,
+                            imageUrl: anime.images.webp.image_url,
+                        };
+                    }
+                );
+                return [...acc, ...entries];
+            },
+            []
+        );
+
+        res.json({ data: animes });
+    }
+);
+
+export { getAnimes, getAnime, getRecommendationsBasedOnAnime, getRecentlyUserRecommendedAnimes };
