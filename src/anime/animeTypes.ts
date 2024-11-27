@@ -28,7 +28,7 @@ export interface IUserAnimeEntry {
 // represents two top-level properties in the json response from the jikan api when
 // animes are requested
 export interface AnimeApiResponse {
-    data: Record<string, any>;
+    data: SingleAnimeApiResponse[];
     pagination?: Record<string, any>;
 }
 
@@ -49,4 +49,17 @@ export interface AnimeEntryApiResponse {
         };
     };
     title: string;
+}
+
+// represents the properties used from a single anime's information thats
+// retrieved from the jikan api
+export interface SingleAnimeApiResponse extends AnimeEntryApiResponse {
+    title_english: string;
+    episodes: number;
+    synopsis: string;
+    year: number;
+    genres: {
+        name: string;
+    }[];
+    [key: string]: any;
 }
