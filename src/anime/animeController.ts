@@ -8,7 +8,7 @@ function transformAnimeData(anime: Record<string, any>): IAnime {
         malId: anime.mal_id,
         title: anime.title_english ?? anime.title,
         url: anime.url,
-        imageUrl: anime.images.jpg.image_url,
+        imageUrl: anime.images.webp.image_url,
         episodes: anime.episodes,
         synopsis: anime.synopsis,
         genres: anime.genres.map((genre: Record<string, any>) => genre.name),
@@ -36,7 +36,7 @@ const getAnimes = asyncHandler(async (req: Request, res: Response, next: NextFun
         return transformAnimeData(anime);
     });
 
-    res.json({ pagination, animeData });
+    res.json({ pagination, data: animeData });
 });
 
 const getAnime = asyncHandler(async (req: Request, res: Response) => {
@@ -57,4 +57,31 @@ const getAnime = asyncHandler(async (req: Request, res: Response) => {
     res.json({ anime });
 });
 
-export { getAnimes, getAnime };
+const getRecommendationsBasedOnAnime = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { malId } = req.params;
+        const response = await fetch(
+            `${process.env.ANIME_API_BASE_URL}/anime/${malId}/recommendations`
+        );
+
+        if (!response.ok) {
+            logError(response.status, response.statusText);
+            throw new AppError("Could not find recommendations for this anime", response.status);
+        }
+
+        const { data } = await response.json();
+        const animes: Partial<IAnime> = data.map((anime: { entry: Record<string, any> }) => {
+            const entry = anime.entry;
+            return {
+                malId: entry.mal_id,
+                title: entry.title,
+                url: entry.url,
+                imageUrl: entry.images.webp.image_url,
+            };
+        });
+
+        res.json({ data: animes });
+    }
+);
+
+export { getAnimes, getAnime, getRecommendationsBasedOnAnime };
