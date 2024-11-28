@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import asyncHandler from "express-async-handler";
 import authService from "./authService";
 import { unauthenticated } from "./authMiddleware";
 import { IUser } from "../user/userTypes";
 import { HydratedDocument } from "mongoose";
 
-const registerUser = [
+const registerUser: RequestHandler[] = [
     unauthenticated,
     asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
         const { username, email, password } = req.body;
@@ -20,7 +20,7 @@ const registerUser = [
         res.json({ data: { token, user: { id: user.id, username, email } } });
     }),
 ];
-const loginUser = [
+const loginUser: RequestHandler[] = [
     unauthenticated,
     asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
         const { email, password } = req.body;
