@@ -33,7 +33,7 @@ function verifyToken(req: Request, res: Response, next: NextFunction) {
 
 function unauthenticated(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers["authorization"];
-    const token = authHeader?.split(" ")[1];
+    const token = authHeader && authHeader?.split(" ")[1];
 
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET as string, (err, payload) => {
@@ -42,11 +42,11 @@ function unauthenticated(req: Request, res: Response, next: NextFunction) {
                 return;
             }
 
-            next(new AppError("You are already logged in", 403));
+            next(new AppError("You are already logged in.", 403));
             return;
         });
     }
-    next;
+    next();
 }
 
-export { verifyToken, unauthenticated };
+export { unauthenticated, verifyToken };
