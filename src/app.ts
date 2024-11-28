@@ -7,10 +7,10 @@ import connectToDb from "./config/dbConfig";
 
 dotenv.config({ path: __dirname + "/../.env" });
 const app: Express = express();
-connectToDb(process.env.MONGO_URI as string);
-
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
+connectToDb(process.env.MONGO_URI as string);
 
 app.use("/api/v1", indexRouter);
 
