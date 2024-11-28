@@ -1,7 +1,9 @@
-/**
- * GET & POST: /api/login
- */
+import { RequestHandler, Router } from "express";
+import { loginUser, registerUser } from "./authControllers";
 
-/**
- * GET & POST /api/register
- */
+const router = Router();
+
+router.post("/login", loginUser);
+router.post("/register", registerUser);
+
+export default router;
