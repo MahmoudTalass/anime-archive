@@ -31,7 +31,7 @@ class AuthService {
             }
         }
 
-        const hashedPassword = bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
             email,
             username,
