@@ -4,9 +4,10 @@ import { AppError } from "../helpers/errorHelpers";
 
 function verifyToken(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers["authorization"];
-    const token = authHeader?.split(" ")[1];
 
-    if (token) {
+    if (authHeader) {
+        const token = authHeader?.split(" ")[1];
+
         jwt.verify(token, process.env.JWT_SECRET as string, (err, payload) => {
             if (err) {
                 let errorMessage = "";
@@ -37,13 +38,15 @@ function unauthenticated(req: Request, res: Response, next: NextFunction) {
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET as string, (err, payload) => {
             if (err) {
-                return next();
+                next();
+                return;
             }
 
-            return next(new AppError("You are already logged in", 403));
+            next(new AppError("You are already logged in", 403));
+            return;
         });
     }
-    return next;
+    next;
 }
 
 export { verifyToken, unauthenticated };
