@@ -7,19 +7,7 @@ import {
     SingleAnimeApiResponse,
 } from "./animeTypes";
 import { AppError, logError } from "../helpers/errorHelpers";
-
-function transformAnimeData(anime: SingleAnimeApiResponse): IAnime {
-    return {
-        malId: anime.mal_id,
-        title: anime.title_english ?? anime.title,
-        url: anime.url,
-        imageUrl: anime.images.webp.image_url,
-        episodes: anime.episodes,
-        synopsis: anime.synopsis,
-        genres: anime.genres.map((genre: Record<string, any>) => genre.name),
-        year: anime.year,
-    };
-}
+import { transformAnimeData } from "./animeUtilities";
 
 const getAnimes = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     // used || since NaN would pass ?? operator
