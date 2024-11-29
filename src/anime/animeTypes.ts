@@ -14,7 +14,7 @@ export interface IAnime {
 export type AnimeWatchStatus = "completed" | "watching" | "planning to watch";
 
 export interface IUserAnimeEntry {
-    animeId: Types.ObjectId;
+    malId: Types.ObjectId;
     status: AnimeWatchStatus;
     startedDate?: Date;
     finishedDate?: Date;

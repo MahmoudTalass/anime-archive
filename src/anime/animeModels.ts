@@ -13,10 +13,11 @@ const animeSchema: Schema = new Schema<IAnime>({
 
 const userAnimeEntrySchema: Schema = new Schema<IUserAnimeEntry>(
     {
-        animeId: { type: Schema.Types.ObjectId, ref: "Anime", index: true },
+        malId: { type: Schema.Types.ObjectId, ref: "Anime", index: true },
         status: {
             type: String,
             enum: ["completed", "watching", "planning to watch"],
+            default: "watching",
             required: true,
         },
         finishedDate: { type: Schema.Types.Date },
