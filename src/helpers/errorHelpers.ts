@@ -14,7 +14,7 @@ export function logError(statusCode: number, errorMessage: string, functionName?
     if (functionName) {
         message += `, occured in ${functionName}`;
     }
-    console.error();
+    console.error(message);
 }
 
 export function errorHandlingMiddleware(
