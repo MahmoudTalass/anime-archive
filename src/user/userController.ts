@@ -3,9 +3,11 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import { AppError, logError } from "../helpers/errorHelpers";
 import userService from "./userService";
 import { AnimeWatchStatus } from "../anime/animeTypes";
+import { verifyToken } from "../auth/authMiddleware";
 
-const getUserAnimes: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
+const getUserAnimes: RequestHandler[] = [
+    verifyToken,
+    asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
         const pageNumber: number = Number(req.query.pageNumber) || 1;
         const perPage = 40;
         const searchTerm = req.query.query as string | undefined;
@@ -31,5 +33,7 @@ const getUserAnimes: RequestHandler = asyncHandler(
                 totalPages: Math.ceil(documentCount / perPage),
             },
         });
-    }
-);
+    }),
+];
+
+export { getUserAnimes };
