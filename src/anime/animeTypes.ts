@@ -11,7 +11,7 @@ export interface IAnime {
     year: number;
 }
 
-type AnimeWatchStatus = "completed" | "watching" | "planning to watch";
+export type AnimeWatchStatus = "completed" | "watching" | "planning to watch";
 
 export interface IUserAnimeEntry {
     animeId: Types.ObjectId;
