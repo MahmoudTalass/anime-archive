@@ -1,8 +1,10 @@
 import { HydratedDocument, isValidObjectId } from "mongoose";
 import { AppError, logError } from "../helpers/errorHelpers";
 import { IAnime } from "../anime/animeTypes";
-import { Anime, UserAnimeEntry } from "../anime/animeModels";
+import { Anime } from "../anime/animeModels";
 import { transformAnimeData } from "./animeUtilities";
+import { log } from "console";
+import { logger } from "../helpers/logger";
 
 class AnimeService {
     async getAnimeFromAPI(malId: string): Promise<IAnime> {
@@ -18,22 +20,14 @@ class AnimeService {
 
         const { data } = await response.json();
         const anime: IAnime = transformAnimeData(data);
+        logger(`Retrieved anime with malId [${malId}] from the anime API`);
 
         return anime;
     }
 
     async getAnimeFromDB(malId: string): Promise<HydratedDocument<IAnime> | null> {
-        if (!isValidObjectId(malId)) {
-            logError(
-                400,
-                `the malId [${malId}] provided is an invalid object id`,
-                "getUserAnimeList"
-            );
-            throw new AppError("Invalid malId (anime id).", 400);
-        }
-
-        const anime: HydratedDocument<IAnime> | null = await Anime.findById(malId).exec();
-
+        const anime: HydratedDocument<IAnime> | null = await Anime.findOne({ malId }).exec();
+        log(`Retrieved anime with malId [${malId}] from database`);
         return anime;
     }
 
@@ -42,6 +36,7 @@ class AnimeService {
     async getAnime(malId: string): Promise<HydratedDocument<IAnime>> {
         let anime = await this.getAnimeFromDB(malId);
         if (anime === null) {
+            logger(`Could not find the anime with malId [${malId}] in the database`, "getAnime");
             const animeFromAPI = await this.getAnimeFromAPI(malId);
             anime = await this.addAnimeToDB(animeFromAPI);
         }
@@ -52,7 +47,7 @@ class AnimeService {
     async addAnimeToDB(anime: IAnime): Promise<HydratedDocument<IAnime>> {
         const animeDocument = new Anime(anime);
         let addedAnime = await animeDocument.save();
-
+        logger(`Added anime with malId [${addedAnime.malId}] to database`, "addAnimeToDB");
         return addedAnime;
     }
 }
