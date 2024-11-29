@@ -47,7 +47,7 @@ class UserService {
         if (!isValidObjectId(userId)) {
             logError(
                 400,
-                `the user id ${userId} provided is an invalid object id`,
+                `the user id [${userId}] provided is an invalid object id`,
                 "getUserAnimeList"
             );
             throw new AppError("Invalid user id.", 400);
