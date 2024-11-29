@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUserAnimeEntries } from "./userController";
+import { getUserAnimeEntries, addAnimeEntryToUserList } from "./userController";
 
 const router: Router = Router();
 
@@ -18,7 +18,7 @@ router.get("/animes", getUserAnimeEntries);
     change the status, add notes, start date, etc
  * POST: /api/animes/
  */
-router.post("/animes");
+router.post("/animes", addAnimeEntryToUserList);
 
 /**
  * Remove an anime entry from the user's animes
