@@ -1,4 +1,4 @@
-import { default as asyncHandler } from "express-async-handler";
+import asyncHandler from "express-async-handler";
 import { NextFunction, Request, Response } from "express";
 import {
     AnimeApiResponse,
@@ -8,6 +8,8 @@ import {
 } from "./animeTypes";
 import { AppError, logError } from "../helpers/errorHelpers";
 import { transformAnimeData } from "./animeUtilities";
+import animeService from "./animeService";
+import { HydratedDocument } from "mongoose";
 
 const getAnimes = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     // used || since NaN would pass ?? operator
@@ -34,18 +36,8 @@ const getAnimes = asyncHandler(async (req: Request, res: Response, next: NextFun
 
 const getAnime = asyncHandler(async (req: Request, res: Response) => {
     const { malId } = req.params;
-    const response = await fetch(`${process.env.ANIME_API_BASE_URL}/anime/${malId}`);
 
-    if (!response.ok) {
-        logError(response.status, response.statusText, "getAnime");
-        if (response.status === 404) {
-            throw new AppError("Anime not found.", 404);
-        }
-        throw new AppError("Could not retreive anime data.");
-    }
-
-    const { data } = await response.json();
-    const anime: IAnime = transformAnimeData(data);
+    const anime: HydratedDocument<IAnime> = await animeService.getAnime(malId);
 
     res.json({ data: anime });
 });
