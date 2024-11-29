@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { getUserAnimes } from "./userController";
 
 const router: Router = Router();
 
@@ -7,16 +8,16 @@ const router: Router = Router();
  * GET: /api/animes/animelist?status=status&page=pageNumber (1 if page number isn't provided)
  */
 /**
- * view all the animes the user has added.
- * GET: /api/animes/animelist?page=pageNumber (1 if not provided)
+ * view all the animes the user has added or an anime with a specific name
+ * GET: /api/animes/animelist?page=pageNumber&q=animeName&status=animeStatus (1 if not provided)
  */
-router.get("/animes");
+router.get("/animes", getUserAnimes);
 
 /**
  * search for an anime with a name from the user list
  * GET: /api/animes/animelist?search=searchterm&page=pageNumber (1 if not provided)
  */
-router.get("/animes/:malId");
+router.get("/animes");
 
 /**
  * Add an anime to the user's list. (MUST PICK STATUS, EG. completed, watching, plan-to-watch)
@@ -30,3 +31,5 @@ router.post("/animes");
  * Remove an anime entry from the user's animes
  */
 router.delete("/animes/:malId");
+
+export default router;
