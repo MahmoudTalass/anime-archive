@@ -4,6 +4,7 @@ import { AppError, logError } from "../helpers/errorHelpers";
 import { IUser } from "./userTypes";
 import { AnimeWatchStatus, IUserAnimeEntry } from "../anime/animeTypes";
 import { UserAnimeEntry } from "../anime/animeModels";
+import { logger } from "../helpers/logger";
 
 class UserService {
     async getUser(
@@ -77,7 +78,28 @@ class UserService {
         return await UserAnimeEntry.countDocuments({ status });
     }
 
-    async addAnimeToList() {}
+    async addAnimeEntryToUserList(malId: string, userId: string) {
+        const anime = await UserAnimeEntry.findOne({ malId, userId });
+
+        if (anime === null) {
+            const userAnimeEntry = new UserAnimeEntry({
+                malId,
+                userId,
+            });
+
+            logger(
+                `added anime with malId [${malId}] to list of user with user id [${userId}]`,
+                "addAnimeEntryToUserList"
+            );
+
+            await userAnimeEntry.save();
+            return;
+        }
+        logger(
+            `No op. anime with malId [${malId}] alreayd exists in the list of the user with user id [${userId}]`,
+            "addAnimeEntryToUserList"
+        );
+    }
 }
 
 export default new UserService();
