@@ -5,7 +5,7 @@ import userService from "./userService";
 import { AnimeWatchStatus } from "../anime/animeTypes";
 import { verifyToken } from "../auth/authMiddleware";
 
-const getUserAnimes: RequestHandler[] = [
+const getUserAnimeEntries: RequestHandler[] = [
     verifyToken,
     asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
         const pageNumber: number = Number(req.query.pageNumber) || 1;
@@ -15,7 +15,7 @@ const getUserAnimes: RequestHandler[] = [
 
         const [documentCount, animes] = await Promise.all([
             userService.getTotalAnimes(status),
-            userService.getUserAnimes(
+            userService.getUserAnimeEntries(
                 req.user?.id as string,
                 pageNumber,
                 perPage,
@@ -36,4 +36,10 @@ const getUserAnimes: RequestHandler[] = [
     }),
 ];
 
-export { getUserAnimes };
+const addAnimeToUserList: RequestHandler[] = [
+    asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+        const { malId } = req.body;
+    }),
+];
+
+export { getUserAnimeEntries };

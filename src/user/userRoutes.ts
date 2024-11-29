@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUserAnimes } from "./userController";
+import { getUserAnimeEntries } from "./userController";
 
 const router: Router = Router();
 
@@ -11,19 +11,12 @@ const router: Router = Router();
  * view all the animes the user has added or an anime with a specific name
  * GET: /api/animes/animelist?page=pageNumber&q=animeName&status=animeStatus (1 if not provided)
  */
-router.get("/animes", getUserAnimes);
+router.get("/animes", getUserAnimeEntries);
 
 /**
- * search for an anime with a name from the user list
- * GET: /api/animes/animelist?search=searchterm&page=pageNumber (1 if not provided)
- */
-router.get("/animes");
-
-/**
- * Add an anime to the user's list. (MUST PICK STATUS, EG. completed, watching, plan-to-watch)
- * POST: /api/animes/:id/
- * body will include the status and
- * optionally, notes, rating, current episodes watched start date, finished date.
+ * Add an anime to the user's list. It is added to the watching list and the user can then make 
+    change the status, add notes, start date, etc
+ * POST: /api/animes/
  */
 router.post("/animes");
 

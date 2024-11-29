@@ -37,7 +37,7 @@ class UserService {
         return user;
     }
 
-    async getUserAnimes(
+    async getUserAnimeEntries(
         userId: string,
         pageNumber: number,
         perPage: number,
@@ -76,6 +76,8 @@ class UserService {
     async getTotalAnimes(status?: AnimeWatchStatus): Promise<number> {
         return await UserAnimeEntry.countDocuments({ status });
     }
+
+    async addAnimeToList() {}
 }
 
 export default new UserService();
