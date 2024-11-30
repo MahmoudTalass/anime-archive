@@ -34,7 +34,7 @@ const getAnimes = asyncHandler(async (req: Request, res: Response, next: NextFun
     res.json({ pagination, data: animeData });
 });
 
-const getAnime = asyncHandler(async (req: Request, res: Response) => {
+const getAnime = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { malId } = req.params;
 
     const anime: HydratedDocument<IAnime> = await animeService.getAnime(malId);
