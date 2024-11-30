@@ -83,7 +83,7 @@ class UserService {
         return total;
     }
 
-    async addAnimeEntryToUserList(malId: string, userId: string) {
+    async addAnimeEntryToUserList(malId: string, userId: string): Promise<void> {
         const anime = await UserAnimeEntry.findOne({ malId, userId });
 
         if (anime === null) {
@@ -110,7 +110,7 @@ class UserService {
         malId: string,
         animeEntryUpdates: Partial<IUserAnimeEntry>,
         userId: string
-    ) {
+    ): Promise<void> {
         const animeExistsInUserList = await UserAnimeEntry.exists({ malId, userId });
 
         if (!animeExistsInUserList) {
