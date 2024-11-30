@@ -57,7 +57,7 @@ class UserService {
         pageNumber -= 1;
         const animesPerPage = 40;
 
-        let dbQuery: Record<string, any> = { _id: userId };
+        let dbQuery: Record<string, any> = { userId };
         if (status) {
             dbQuery.status = status;
         }
@@ -74,8 +74,13 @@ class UserService {
         return animes;
     }
 
-    async getTotalAnimes(status?: AnimeWatchStatus): Promise<number> {
-        return await UserAnimeEntry.countDocuments({ status });
+    async getTotalAnimes(userId: string, status?: AnimeWatchStatus): Promise<number> {
+        const query: Record<string, any> = { userId };
+        if (status) {
+            query.status = status;
+        }
+        const total = await UserAnimeEntry.countDocuments(query);
+        return total;
     }
 
     async addAnimeEntryToUserList(malId: string, userId: string) {
@@ -99,6 +104,34 @@ class UserService {
             `No op. anime with malId [${malId}] alreayd exists in the list of the user with user id [${userId}]`,
             "addAnimeEntryToUserList"
         );
+    }
+
+    async updateUserAnimeEntry(
+        malId: string,
+        animeEntryUpdates: Partial<IUserAnimeEntry>,
+        userId: string
+    ) {
+        const animeExistsInUserList = await UserAnimeEntry.exists({ malId, userId });
+
+        if (!animeExistsInUserList) {
+            logError(
+                404,
+                `anime with malId [${malId}] does not exist in the anime entries of user [${userId}]`,
+                "updateUserAnimeEntry"
+            );
+            throw new AppError(
+                "Anime with the given malId does not exist in the user's list.",
+                404
+            );
+        }
+
+        const animeEntryUpdatesFiltered = Object.fromEntries(
+            Object.entries(animeEntryUpdates).filter(
+                ([_, value]: [string, any]) => value !== undefined
+            )
+        );
+
+        await UserAnimeEntry.updateOne({ malId, userId }, animeEntryUpdatesFiltered);
     }
 }
 
