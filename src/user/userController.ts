@@ -26,7 +26,7 @@ const getUserAnimeEntries: RequestHandler[] = [
         ]);
 
         res.json({
-            data: { animes },
+            data: animes,
             pagination: {
                 perPage,
                 page: pageNumber,
