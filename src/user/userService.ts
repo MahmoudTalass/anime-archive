@@ -133,6 +133,21 @@ class UserService {
 
         await UserAnimeEntry.updateOne({ malId, userId }, animeEntryUpdatesFiltered);
     }
+
+    async deleteUserAnimeEntry(malId: string, userId: string): Promise<void> {
+        const res = await UserAnimeEntry.deleteOne({ malId, userId });
+        if (res.deletedCount === 0) {
+            logger(
+                `No op. Anime entry for anime with malId [${malId}] could not be deleted from the anime entry list for user with userId [${userId}]`,
+                "deleteUserAnimeEntry"
+            );
+        } else {
+            logger(
+                `anime entry for anime with malId ${malId}] was deleted from the anime entry list for user with userId [${userId}]`,
+                "deleteUserAnimeEntry"
+            );
+        }
+    }
 }
 
 export default new UserService();

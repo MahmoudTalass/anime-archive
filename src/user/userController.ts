@@ -67,4 +67,15 @@ const updateUserAnimeEntry: RequestHandler[] = [
     }),
 ];
 
-export { getUserAnimeEntries, addAnimeEntryToUserList, updateUserAnimeEntry };
+const deleteUserAnimeEntry: RequestHandler[] = [
+    verifyToken,
+    asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+        const { malId } = req.params;
+
+        await userService.deleteUserAnimeEntry(malId, req.user?.id as string);
+
+        res.sendStatus(204);
+    }),
+];
+
+export { getUserAnimeEntries, addAnimeEntryToUserList, updateUserAnimeEntry, deleteUserAnimeEntry };

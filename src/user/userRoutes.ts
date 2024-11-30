@@ -3,6 +3,7 @@ import {
     getUserAnimeEntries,
     addAnimeEntryToUserList,
     updateUserAnimeEntry,
+    deleteUserAnimeEntry,
 } from "./userController";
 
 const router: Router = Router();
@@ -30,5 +31,10 @@ router.post("/animes", addAnimeEntryToUserList);
  * adding notes, adding a start date, adding a finished date, etc
  */
 router.put("/animes/:malId", updateUserAnimeEntry);
+
+/**
+ * Delete user anime entry
+ */
+router.delete("/animes/:malId", deleteUserAnimeEntry);
 
 export default router;
