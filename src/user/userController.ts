@@ -15,7 +15,7 @@ const getUserAnimeEntries: RequestHandler[] = [
         const status = req.query.status as AnimeWatchStatus | undefined;
 
         const [documentCount, animes] = await Promise.all([
-            userService.getTotalAnimes(status),
+            userService.getTotalAnimes(req.user?.id as string, status),
             userService.getUserAnimeEntries(
                 req.user?.id as string,
                 pageNumber,
@@ -51,4 +51,20 @@ const addAnimeEntryToUserList: RequestHandler[] = [
     }),
 ];
 
-export { getUserAnimeEntries, addAnimeEntryToUserList };
+const updateUserAnimeEntry: RequestHandler[] = [
+    verifyToken,
+    asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+        const { status, finishedDate, startedDate, notes, score } = req.body;
+        const { malId } = req.params;
+
+        await userService.updateUserAnimeEntry(
+            malId,
+            { status, finishedDate, startedDate, notes, score },
+            req.user?.id as string
+        );
+
+        res.sendStatus(200);
+    }),
+];
+
+export { getUserAnimeEntries, addAnimeEntryToUserList, updateUserAnimeEntry };
