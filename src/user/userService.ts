@@ -1,4 +1,4 @@
-import { HydratedDocument, isValidObjectId } from "mongoose";
+import { HydratedDocument, isValidObjectId, Schema } from "mongoose";
 import { User } from "../user/userModel";
 import { AppError, logError } from "../helpers/errorHelpers";
 import { IUser } from "./userTypes";
@@ -59,9 +59,9 @@ class UserService {
         }
 
         pageNumber -= 1;
-        const animesPerPage = 40;
 
-        let dbQuery: Record<string, any> = { userId };
+        let dbQuery: Record<string, any> = { userId: Schema.Types.ObjectId };
+
         if (status) {
             dbQuery.status = status;
         }
@@ -69,13 +69,41 @@ class UserService {
             dbQuery.searchTerm = searchTerm;
         }
 
-        let animes: HydratedDocument<IUserAnimeEntry>[] = await UserAnimeEntry.find(dbQuery)
-            .sort({ startedDate: "desc" })
-            .skip(pageNumber * animesPerPage)
-            .limit(animesPerPage)
-            .exec();
+        const animes = await UserAnimeEntry.aggregate([
+            { $match: dbQuery },
+            {
+                $lookup: {
+                    from: "animes",
+                    foreignField: "malId",
+                    localField: "malId",
+                    as: "animeDetails",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$animeDetails",
+                },
+            },
+            {
+                $project: {
+                    "animeDetails.synopsis": 0,
+                    "animeDetails.url": 0,
+                    "animeDetails.episodes": 0,
+                },
+            },
+            {
+                $sort: { startedDate: -1 },
+            },
+            {
+                $skip: perPage * pageNumber,
+            },
+            {
+                $limit: perPage,
+            },
+        ]).exec();
 
         logger(`Retrieved animes from user anime entry list for user with userId ${userId}`);
+
         return animes;
     }
 
