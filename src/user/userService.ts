@@ -35,6 +35,10 @@ class UserService {
             throw new AppError("User not found.", 404);
         }
 
+        logger(
+            `Retrieved user information for user with identifier type [${identifierType}] [${identifierValue}]`,
+            "getUser"
+        );
         return user;
     }
 
@@ -71,6 +75,7 @@ class UserService {
             .limit(animesPerPage)
             .exec();
 
+        logger(`Retrieved animes from user anime entry list for user with userId ${userId}`);
         return animes;
     }
 
@@ -80,6 +85,12 @@ class UserService {
             query.status = status;
         }
         const total = await UserAnimeEntry.countDocuments(query);
+        logger(
+            `Retrieved anime entry count for user with userId [${userId}] ${
+                status ? `for animes with status [${status}]` : ""
+            }`,
+            "getTotalAnimes"
+        );
         return total;
     }
 
@@ -132,6 +143,9 @@ class UserService {
         );
 
         await UserAnimeEntry.updateOne({ malId, userId }, animeEntryUpdatesFiltered);
+        logger(
+            `Updated anime entry for anime with malId [${malId}] for user with userId [${userId}]`
+        );
     }
 
     async deleteUserAnimeEntry(malId: string, userId: string): Promise<void> {
