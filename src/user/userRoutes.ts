@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { getUserAnimeEntries, addAnimeEntryToUserList } from "./userController";
+import {
+    getUserAnimeEntries,
+    addAnimeEntryToUserList,
+    updateUserAnimeEntry,
+} from "./userController";
 
 const router: Router = Router();
 
@@ -21,8 +25,10 @@ router.get("/animes", getUserAnimeEntries);
 router.post("/animes", addAnimeEntryToUserList);
 
 /**
- * Remove an anime entry from the user's animes
+ * allow the user to make changes to an anime they have in their list
+ *
+ * adding notes, adding a start date, adding a finished date, etc
  */
-router.delete("/animes/:malId");
+router.put("/animes/:malId", updateUserAnimeEntry);
 
 export default router;
