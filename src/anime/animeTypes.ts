@@ -25,11 +25,29 @@ export interface IUserAnimeEntry {
     score?: number;
 }
 
+export interface PaginationResponse {
+    perPage: number;
+    page: number;
+    total: number;
+    totalPages: number;
+}
+
+export interface APIPaginationResponse {
+    last_visible_page: number;
+    has_next_page: boolean;
+    current_page: number;
+    items: {
+        count: number;
+        total: number;
+        per_page: number;
+    };
+}
+
 // represents two top-level properties in the json response from the jikan api when
 // animes are requested
-export interface AnimeApiResponse {
+export interface AnimesApiResponse {
     data: SingleAnimeApiResponse[];
-    pagination?: Record<string, any>;
+    pagination: APIPaginationResponse;
 }
 
 // represents an anime entry thats in the json response from the jikan api
