@@ -1,10 +1,12 @@
 import asyncHandler from "express-async-handler";
 import { NextFunction, Request, Response } from "express";
 import {
-    AnimeApiResponse,
+    AnimesApiResponse,
     AnimeEntryApiResponse,
     IAnime,
     SingleAnimeApiResponse,
+    PaginationResponse,
+    APIPaginationResponse,
 } from "./animeTypes";
 import { AppError, logError } from "../helpers/errorHelpers";
 import { transformAnimeData } from "./animeUtilities";
@@ -25,13 +27,22 @@ const getAnimes = asyncHandler(async (req: Request, res: Response, next: NextFun
         throw new AppError("Could not retreive anime data, please try again later.", 502);
     }
 
-    const { data, pagination } = (await response.json()) as AnimeApiResponse;
+    const json = (await response.json()) as AnimesApiResponse;
 
-    const animeData: IAnime[] = data.map((anime: SingleAnimeApiResponse) => {
+    const paginationAPIResponse: APIPaginationResponse | undefined = json.pagination;
+
+    const animeData: IAnime[] = json.data.map((anime: SingleAnimeApiResponse) => {
         return transformAnimeData(anime);
     });
 
-    res.json({ pagination, data: animeData });
+    let paginationResponse: PaginationResponse = {
+        page: paginationAPIResponse.current_page,
+        perPage: paginationAPIResponse.items.per_page, // 25 be default (can only be decreased, not increased)
+        total: paginationAPIResponse.items.total,
+        totalPages: paginationAPIResponse.last_visible_page,
+    };
+
+    res.json({ pagination: paginationResponse, data: animeData });
 });
 
 const getAnime = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
