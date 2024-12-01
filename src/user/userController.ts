@@ -33,8 +33,8 @@ const getUserAnimeEntries: RequestHandler[] = [
         };
 
         res.json({
-            data: animes,
             pagination,
+            data: animes,
         });
     }),
 ];
