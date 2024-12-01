@@ -1,7 +1,7 @@
 import { default as asyncHandler } from "express-async-handler";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import userService from "./userService";
-import { AnimeWatchStatus, IAnime } from "../anime/animeTypes";
+import { AnimeWatchStatus, IAnime, PaginationResponse } from "../anime/animeTypes";
 import { verifyToken } from "../auth/authMiddleware";
 import animeService from "../anime/animeService";
 import { HydratedDocument } from "mongoose";
@@ -25,14 +25,16 @@ const getUserAnimeEntries: RequestHandler[] = [
             ),
         ]);
 
+        const pagination: PaginationResponse = {
+            perPage,
+            page: pageNumber,
+            total: documentCount,
+            totalPages: Math.ceil(documentCount / perPage),
+        };
+
         res.json({
             data: animes,
-            pagination: {
-                perPage,
-                page: pageNumber,
-                total: documentCount,
-                totalPages: Math.ceil(documentCount / perPage),
-            },
+            pagination,
         });
     }),
 ];
