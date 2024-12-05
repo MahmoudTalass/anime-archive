@@ -6,29 +6,33 @@ import { IUser } from "../user/userTypes";
 import { HydratedDocument } from "mongoose";
 
 const registerUser: RequestHandler[] = [
-    unauthenticated,
-    asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-        const { username, email, password } = req.body;
-        const user: HydratedDocument<IUser> = await authService.registerUser(
-            username,
-            email,
-            password
-        );
+  unauthenticated,
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { username, email, password } = req.body;
 
-        const token = authService.createJwt(user.id, user.username);
+    const user: HydratedDocument<IUser> = await authService.registerUser(
+      username,
+      email,
+      password
+    );
 
-        res.json({ data: { token, user: { id: user.id, username, email } } });
-    }),
+    const token = authService.createJwt(user.id, user.username);
+
+    res.json({ data: { token, user: { id: user.id, username, email } } });
+  }),
 ];
 const loginUser: RequestHandler[] = [
-    unauthenticated,
-    asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-        const { email, password } = req.body;
-        const { token, user } = await authService.loginUser(email, password);
-        res.json({
-            data: { token, user: { id: user.id, username: user.username, email: user.email } },
-        });
-    }),
+  unauthenticated,
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+    const { token, user } = await authService.loginUser(email, password);
+    res.json({
+      data: {
+        token,
+        user: { id: user.id, username: user.username, email: user.email },
+      },
+    });
+  }),
 ];
 
 export { registerUser, loginUser };
