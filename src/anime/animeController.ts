@@ -80,9 +80,8 @@ const getRandomAnime = asyncHandler(
     }
 
     const { data } = await response.json();
-    const anime: IAnime = transformAnimeData(data);
 
-    res.json({ data: anime });
+    res.json({ data: { malId: data.mal_id } });
   }
 );
 
@@ -90,7 +89,7 @@ const getRecommendationsBasedOnAnime = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { malId } = req.params;
     const response = await fetch(
-      `${process.env.ANIME_API_BASE_URL}/anime/${malId}/recommendations`
+      `${process.env.ANIME_API_BASE_URL}/anime/${malId}/recommendations?limit=25`
     );
 
     if (!response.ok) {
