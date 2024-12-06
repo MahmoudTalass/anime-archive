@@ -36,9 +36,14 @@ const getAnimes = asyncHandler(
     const paginationAPIResponse: APIPaginationResponse | undefined =
       json.pagination;
 
-    const animeData: IAnime[] = json.data.map(
+    const animeData: Partial<IAnime>[] = json.data.map(
       (anime: SingleAnimeApiResponse) => {
-        return transformAnimeData(anime);
+        const transformed = transformAnimeData(anime);
+        return {
+          title: transformed.title,
+          imageUrl: transformed.imageUrl,
+          malId: transformed.malId,
+        };
       }
     );
 
