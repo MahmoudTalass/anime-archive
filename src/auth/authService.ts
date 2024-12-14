@@ -30,7 +30,7 @@ class AuthService {
         throw new AppError("Usernames must be unique.", 400);
       }
     }
-    console.log("hello");
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       email,
