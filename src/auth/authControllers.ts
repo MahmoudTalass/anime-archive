@@ -1,12 +1,18 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import asyncHandler from "express-async-handler";
 import authService from "./authService";
-import { unauthenticated } from "./authMiddleware";
+import {
+  unauthenticated,
+  validateLogin,
+  validateRegister,
+} from "./authMiddleware";
 import { IUser } from "../user/userTypes";
 import { HydratedDocument } from "mongoose";
+import { ValidationChain } from "express-validator";
 
 const registerUser: RequestHandler[] = [
   unauthenticated,
+  ...validateRegister,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { username, email, password } = req.body;
 
@@ -23,6 +29,7 @@ const registerUser: RequestHandler[] = [
 ];
 const loginUser: RequestHandler[] = [
   unauthenticated,
+  ...validateLogin,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     const { token, user } = await authService.loginUser(email, password);
