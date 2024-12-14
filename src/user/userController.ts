@@ -9,9 +9,16 @@ import {
 import { verifyToken } from "../auth/authMiddleware";
 import animeService from "../anime/animeService";
 import { HydratedDocument } from "mongoose";
+import {
+  addAnimeToUserListValidation,
+  deleteUserAnimeEntryValidation,
+  getUserAnimeEntriesValidation,
+  updateUserAnimeEntryValidation,
+} from "./userMiddleware";
 
 const getUserAnimeEntries: RequestHandler[] = [
   verifyToken,
+  ...getUserAnimeEntriesValidation,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const pageNumber: number = Number(req.query.page) || 1;
     const perPage = 40;
@@ -45,6 +52,7 @@ const getUserAnimeEntries: RequestHandler[] = [
 
 const addAnimeEntryToUserList: RequestHandler[] = [
   verifyToken,
+  ...addAnimeToUserListValidation,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { malId } = req.body;
 
@@ -62,6 +70,7 @@ const addAnimeEntryToUserList: RequestHandler[] = [
 
 const updateUserAnimeEntry: RequestHandler[] = [
   verifyToken,
+  ...updateUserAnimeEntryValidation,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { status, finishedDate, startedDate, notes, score } = req.body;
     const { malId } = req.params;
@@ -78,6 +87,7 @@ const updateUserAnimeEntry: RequestHandler[] = [
 
 const deleteUserAnimeEntry: RequestHandler[] = [
   verifyToken,
+  ...deleteUserAnimeEntryValidation,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { malId } = req.params;
 
