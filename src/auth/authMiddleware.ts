@@ -79,7 +79,7 @@ const validateRegister: (ValidationChain | RequestHandler)[] = [
     const errors: Result<ValidationError> = validationResult(req);
 
     if (!errors.isEmpty()) {
-      let errorMessage = errors
+      const errorMessage = errors
         .array()
         .map((err) => err.msg)
         .join(", ");
