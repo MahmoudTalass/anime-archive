@@ -42,6 +42,11 @@ const addAnimeToUserListValidation = [
   validationHandlerMiddleware,
 ];
 
+const isValidDateString = (value: string) => {
+  const date = new Date(value);
+  return !Number.isNaN(date.getFullYear());
+};
+
 const updateUserAnimeEntryValidation = [
   param("malId")
     .notEmpty()
@@ -56,18 +61,18 @@ const updateUserAnimeEntryValidation = [
     ),
   body("finishedDate")
     .optional()
-    .isDate()
+    .custom(isValidDateString)
     .withMessage("finishedDate must be a date string"),
   body("startedDate")
     .optional()
-    .isDate()
+    .custom(isValidDateString)
     .withMessage("startedDate must be a date string"),
   body("notes")
     .optional()
     .isLength({ min: 0, max: 400 })
     .withMessage("Notes must be 0-400 characters long"),
   body("score")
-    .optional()
+    .optional({ values: "null" })
     .isInt({ min: 1, max: 10 })
     .withMessage("Score must be an integer in the range 1-10"),
   validationHandlerMiddleware,
