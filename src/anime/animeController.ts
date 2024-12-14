@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import {
   AnimesApiResponse,
   AnimeEntryApiResponse,
@@ -12,9 +12,11 @@ import { AppError, logError } from "../helpers/errorHelpers";
 import { transformAnimeData } from "./animeUtilities";
 import animeService from "./animeService";
 import { HydratedDocument } from "mongoose";
+import { getAnimesValidation } from "./animeMiddleware";
 
-const getAnimes = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+const getAnimes: RequestHandler[] = [
+  ...getAnimesValidation,
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     // used || since NaN would pass ?? operator
     const pageNumber = Number(req.query.page) || 1;
     const searchTerm = req.query.q ?? "";
@@ -55,10 +57,10 @@ const getAnimes = asyncHandler(
     };
 
     res.json({ pagination: paginationResponse, data: animeData });
-  }
-);
+  }),
+];
 
-const getAnime = asyncHandler(
+const getAnime: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { malId } = req.params;
 
@@ -68,7 +70,7 @@ const getAnime = asyncHandler(
   }
 );
 
-const getRandomAnime = asyncHandler(
+const getRandomAnime: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const response = await fetch(
       `${process.env.ANIME_API_BASE_URL}/random/anime`
@@ -85,7 +87,7 @@ const getRandomAnime = asyncHandler(
   }
 );
 
-const getRecommendationsBasedOnAnime = asyncHandler(
+const getRecommendationsBasedOnAnime: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { malId } = req.params;
     const response = await fetch(
@@ -121,7 +123,7 @@ const getRecommendationsBasedOnAnime = asyncHandler(
   }
 );
 
-const getRecentlyUserRecommendedAnimes = asyncHandler(
+const getRecentlyUserRecommendedAnimes: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const pageNumber: number = Number(req.query.page) || 1;
     const response = await fetch(
