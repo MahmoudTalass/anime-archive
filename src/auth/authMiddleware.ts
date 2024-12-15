@@ -52,8 +52,9 @@ function unauthenticated(req: Request, res: Response, next: NextFunction) {
          next(new AppError("You are already logged in.", 403));
          return;
       });
+   } else {
+      next();
    }
-   next();
 }
 
 const validateAuth = [
