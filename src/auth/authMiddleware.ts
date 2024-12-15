@@ -100,7 +100,7 @@ const validateLogin: (ValidationChain | RequestHandler)[] = [
             .array()
             .map((err) => err.msg)
             .join(", ");
-         next(new AppError(errorMessage));
+         next(new AppError(errorMessage, 400));
          return;
       }
       next();
